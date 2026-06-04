@@ -27,4 +27,4 @@ Proiectul nu necesită instalarea unor servere locale sau a altor dependențe (l
 
 ## Previzualizare
 
-![Screenshot Scena 3D](./screenshot.png)
+![Screenshot Scena 3D](./insula.png)
