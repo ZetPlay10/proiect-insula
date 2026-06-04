@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Scenă 3D - Insula Plutitoare</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; }
+        canvas { display: block; }
+        #info { position: absolute; top: 10px; width: 100%; text-align: center; color: white; font-family: sans-serif; text-shadow: 1px 1px 2px black; pointer-events: none;}
+    </style>
+</head>
+<body>
+    <div id="info">Trage cu mouse-ul pentru a roti scena | Scroll pentru zoom</div>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Setare Scenă, Cameră, Render
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Lumini
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(10, 20, 10);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        // Baza Insulei
+        const islandGeo = new THREE.CylinderGeometry(5, 2, 3, 8);
+        const islandMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+        const island = new THREE.Mesh(islandGeo, islandMat);
+        island.position.y = -1.5;
+        island.receiveShadow = true;
+        scene.add(island);
+
+        // Iarba de pe insulă
+        const grassGeo = new THREE.CylinderGeometry(5.2, 5, 0.5, 8);
+        const grassMat = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+        const grass = new THREE.Mesh(grassGeo, grassMat);
+        grass.position.y = 0.25;
+        grass.receiveShadow = true;
+        scene.add(grass);
+
+        // Casa (Baza)
+        const houseGeo = new THREE.BoxGeometry(2, 2, 2);
+        const houseMat = new THREE.MeshStandardMaterial({ color: 0xFFD700 });
+        const house = new THREE.Mesh(houseGeo, houseMat);
+        house.position.set(-1.5, 1.5, 1);
+        house.castShadow = true;
+        house.receiveShadow = true;
+        scene.add(house);
+
+        // Casa (Acoperiș)
+        const roofGeo = new THREE.ConeGeometry(1.8, 1.5, 4);
+        const roofMat = new THREE.MeshStandardMaterial({ color: 0xB22222 });
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.position.set(-1.5, 3.25, 1);
+        roof.rotation.y = Math.PI / 4;
+        roof.castShadow = true;
+        scene.add(roof);
+
+        // Copacul (Trunchi)
+        const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 1.5);
+        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+        trunk.position.set(2, 1.25, -1.5);
+        trunk.castShadow = true;
+        scene.add(trunk);
+
+        // Copacul (Coroană)
+        const leavesGeo = new THREE.DodecahedronGeometry(1.2);
+        const leavesMat = new THREE.MeshStandardMaterial({ color: 0x006400 });
+        const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+        leaves.position.set(2, 2.5, -1.5);
+        leaves.castShadow = true;
+        scene.add(leaves);
+
+        // Cameră și Controale
+        camera.position.set(0, 5, 12);
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.autoRotate = true; // Efect frumos de prezentare
+        controls.autoRotateSpeed = 1.5;
+
+        // Redimensionare fereastră
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Loop Animație
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
